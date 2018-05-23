@@ -59,7 +59,7 @@ void USART3_IRQHandler(void)
 void usart3_init(u32 bound)
 {  
 	NVIC_InitTypeDef NVIC_InitStructure;
-	GPIO_InitTypeDef GPIO_InitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure;               
 	USART_InitTypeDef USART_InitStructure;
  
 	USART_DeInit(USART3);  //复位串口3
@@ -68,7 +68,7 @@ void usart3_init(u32 bound)
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3,ENABLE);//使能USART3时钟
 	
  
-	 GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11 | GPIO_Pin_10; //GPIOB11和GPIOB10初始化
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11 | GPIO_Pin_10; //GPIOB11和GPIOB10初始化
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;//复用功能
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;	//速度50MHz
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP; //推挽复用输出

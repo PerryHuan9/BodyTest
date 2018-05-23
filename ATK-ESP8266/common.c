@@ -169,14 +169,19 @@ void atk_8266_test(void)
 		u8 key;
 		u8 p1[32]={0};
 		u8 ipbuf[16]; 	//IP缓存
-		POINT_COLOR=RED;
+
+		usart3_init(115200);
 		printf("开始WIFI测试\r\n");
 		while(atk_8266_send_cmd("AT","OK",20))//检查WIFI模块是否在线
 		{
 			atk_8266_quit_trans();//退出透传
 			atk_8266_send_cmd("AT+CIPMODE=0","OK",200);  //关闭透传模式	
 			printf("未检测到模块\r\n");
-			delay_ms(800);
+			LCD_ShowString(30,140,200,16,16,"ATK-ESP8266 Error!"); 
+			delay_ms(500);
+			LCD_ShowString(30,140,200,16,16,"Please Check!!!"); 
+			delay_ms(100);
+			delay_ms(400);
 		} 
 //		atk_8266_send_cmd("AT+CWMODE=2","OK",20);
 //		atk_8266_send_cmd("AT+RST","OK",20);
