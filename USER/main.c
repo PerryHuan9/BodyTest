@@ -27,6 +27,7 @@ int main(void){
 		u8 is_wifi=1;
 		u8 blood_tag=0;
 		u8 key;
+		u8 command;
 		u8 p[32]={0};
 		u8 temperature_len=0;
 		u8 blood_len=0;
@@ -67,7 +68,7 @@ mode:
 					}	
 		}
 		
-    
+		LCD_Fill(30,140,230,156,WHITE);
 		printf("初始化完毕\r\n");
 
 
@@ -79,7 +80,7 @@ mode:
 						printf("开始测量血压\r\n");
 						u2_printf("%s\r\n","AT+SP:200");
 						delay_ms(100);							
-				}else if(key==3){
+				}else if(key==3||command){
 						if(is_wifi){
 									sprintf((char*)p,USART6_RX_BUF);//测试数据
 									printf("温度数据的长度：%d\r\n",temperature_len);	
@@ -93,6 +94,7 @@ mode:
 									atk_8266_send_cmd("AT+CIPSEND=0,19","OK",200);  //发送指定长度的数据
 									delay_ms(200);
 									atk_8266_send_data(p,"OK",100);  //发送指定长度的数据
+									
 									printf("发送血压数据\r\n");						
 						}else{
 								u3_printf("%s\r\n",USART2_RX_BUF);
@@ -100,21 +102,16 @@ mode:
 								u3_printf("%s\r\n",USART6_RX_BUF);
 								printf("send bluetooth blood pressure data\r\n");
 								delay_ms(100);
+							
 						}
+						command=0;
 				}else if(key==4){		
 						if(is_wifi){
-//								 while(HC05_Init()){
-//										LCD_ShowString(30,140,200,16,16,"ATK-HC05 Error!"); 
-//										delay_ms(500);
-//										LCD_ShowString(30,140,200,16,16,"Please Check!!!"); 
-//										delay_ms(100);
-//								}	
 								is_wifi=0;
 								LCD_ShowString(30,90,300,16,16,"KEY_UP : change to blueteeth");
 								goto mode;
 								
-						}else{
-						 // atk_8266_test();
+						}else{						
 								is_wifi=1;
 								LCD_ShowString(30,90,300,16,16,"KEY_UP : change to wifi");
 								goto mode;
@@ -144,7 +141,13 @@ mode:
 				
 				if(USART3_RX_STA&0X8000){ 						
 							wifi_len=USART3_RX_STA&0X7FFF;	//得到本次接收到的数据长度
-							USART3_RX_BUF[temperature_len]=0;		//添加结束符 
+							USART3_RX_BUF[wifi_len]=0;		//添加结束符 
+							if(!strcmp((const char*)USART3_RX_BUF,"COMMAND")){
+									command=1;
+									LED0=!LED0;
+									LED1=!LED1;
+							}
+							
 							printf("接收到的数据：%s\r\n",USART3_RX_BUF);	//发送到串口  
 							USART3_RX_STA=0;
 					
